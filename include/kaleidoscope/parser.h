@@ -9,40 +9,10 @@
 #include "token.h"
 #include <cassert>
 
-bool token_equal(const Token *lhs, const Token *rhs) {
-    if (lhs == nullptr && rhs == nullptr) {
-        return true;
-    }
-    if (lhs == nullptr || rhs == nullptr) {
-        return false;
-    }
-    if (lhs->type != rhs->type) {
-        return false;
-    }
-    switch (lhs->type) {
-        case TokenType::Marker:
-            return reinterpret_cast<const Marker *>(lhs)->marker_type ==
-                   reinterpret_cast<const Marker *>(rhs)->marker_type;
-        default:
-            throw std::runtime_error("todo token equal");
-    }
-}
-
-bool token_equal(const Token *lhs, const std::vector<Token*> *rhs) {
-    if (rhs == nullptr) {
-        return lhs == nullptr;
-    }
-
-    for (auto r: *rhs) {
-        if (token_equal(lhs, r)) {
-            return true;
-        }
-    }
-    return false;
-}
-
+// 抽象一个Lexer接口
+// std::runtime_error 在将来可以修改成各种更人性化的错误
 template<typename Lexer>
-struct Parser {
+struct Parser /* implement Parser */ {
     explicit Parser(Lexer &lexer) : lexer(lexer), token(lexer.next_token()) {
     }
 
@@ -57,10 +27,6 @@ protected:
     static const Marker rParen;
     static const Marker dot;
     static const std::vector<Token*> rParenContainer;
-
-    void next_token() {
-        token = lexer.next_token();
-    }
 
     Token *token;
     Lexer &lexer;
@@ -170,6 +136,10 @@ protected:
                               next_marker, pri, till);
         }
         return new BiExp(lhs, marker, parseBiExp(rhs, next_marker, pri, till));
+    }
+
+    void next_token() {
+        token = lexer.next_token();
     }
 };
 

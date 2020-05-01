@@ -114,5 +114,37 @@ struct Number : public Token {
     explicit Number(int64_t num) : Token(TokenType::Number), value(num) {}
 };
 
+bool token_equal(const Token *lhs, const Token *rhs) {
+    if (lhs == nullptr && rhs == nullptr) {
+        return true;
+    }
+    if (lhs == nullptr || rhs == nullptr) {
+        return false;
+    }
+    if (lhs->type != rhs->type) {
+        return false;
+    }
+    switch (lhs->type) {
+        case TokenType::Marker:
+            return reinterpret_cast<const Marker *>(lhs)->marker_type ==
+                   reinterpret_cast<const Marker *>(rhs)->marker_type;
+        default:
+            throw std::runtime_error("todo token equal");
+    }
+}
+
+bool token_equal(const Token *lhs, const std::vector<Token*> *rhs) {
+    if (rhs == nullptr) {
+        return lhs == nullptr;
+    }
+
+    for (auto r: *rhs) {
+        if (token_equal(lhs, r)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 #endif
