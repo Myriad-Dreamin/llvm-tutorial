@@ -48,4 +48,4 @@ kaleidoscope是官方tutorial的玩具语言，这里的kaleidoscope其实和tut
 
 1. `include`中有源码注释。
 2. LLVM编译方法参考`lib/build-llvm.sh`和`CMakeLists.txt`。
-3. windows下的Mingw64无法编译LLVM，请尝试MSVC工具链。
+3. Windows下的MinGW64无法编译LLVM，请尝试MSVC工具链。

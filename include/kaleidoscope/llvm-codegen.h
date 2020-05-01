@@ -83,7 +83,7 @@ struct LLVMBuilder {
             case MarkerType::Quo:
                 return ir_builder.CreateFDiv(lhs, rhs, "quo_tmp");
             case MarkerType::Mod:
-                throw std::runtime_error("fload mod is not allowed");
+                throw std::runtime_error("float mod is not allowed");
             default :
                 assert(false);
                 return nullptr;
