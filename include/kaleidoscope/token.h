@@ -1,5 +1,3 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-err58-cpp"
 
 
 #ifndef KALEIDOSCOPE_TOKEN_H
@@ -93,4 +91,3 @@ void deleteToken(Token *tok) {
 }
 
 #endif
-#pragma clang diagnostic pop

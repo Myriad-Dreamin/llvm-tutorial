@@ -7,6 +7,7 @@
 #include <istream>
 #include "token.h"
 #include <cctype>
+#include <cassert>
 
 struct IStream {
 

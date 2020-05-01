@@ -7,6 +7,7 @@
 
 #include "ast.h"
 #include "token.h"
+#include <cassert>
 
 bool token_equal(const Token *lhs, const Token *rhs) {
     if (lhs == nullptr && rhs == nullptr) {

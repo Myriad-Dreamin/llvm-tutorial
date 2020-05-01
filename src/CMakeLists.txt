@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(pascal-s)
+project(kaleidoscope)
 
 # test_main source files -> compile to lib to reduce compile time
 add_library(gtest-main STATIC test/test-main.cpp)
@@ -25,4 +25,5 @@ endfunction()
 
 add_subdirectory(lexer/test)
 add_subdirectory(parser/test)
+add_subdirectory(target-llvm)
 

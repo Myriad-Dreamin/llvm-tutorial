@@ -6,12 +6,13 @@
 struct ParserParseTestCase {
     const char *input;
     ASTNode *expected;
+
 };
 
 class GoodParserParseTest : public testing::TestWithParam<ParserParseTestCase> {
 
     void TearDown() override {
-        if (GetParam().expected != nullptr) delete_ast(GetParam().expected);
+        if (GetParam().expected != nullptr) delete GetParam().expected;
     };
 };
 
