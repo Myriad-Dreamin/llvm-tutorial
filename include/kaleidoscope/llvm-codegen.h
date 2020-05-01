@@ -20,6 +20,7 @@
 #include "ast.h"
 
 
+// 用于生成目标中间代码LLVM-IR
 struct LLVMBuilder {
     using LLVMContext = llvm::LLVMContext;
     using Module = llvm::Module;
@@ -31,41 +32,6 @@ struct LLVMBuilder {
     std::map<std::string, Value *> ident_mapping;
 
     LLVMBuilder() :ir_builder(ctx), modules("kale-llvm", ctx) {}
-
-    Value *code_gen_binary_exp(BiExp *pExp) {
-        auto lhs = code_gen(pExp->lhs), rhs = code_gen(pExp->rhs);
-        assert(lhs != nullptr);
-        assert(rhs != nullptr);
-        switch (pExp->marker->marker_type) {
-            case MarkerType::Add:
-                return ir_builder.CreateFAdd(lhs, rhs, "add_tmp");
-            case MarkerType::Sub:
-                return ir_builder.CreateFSub(lhs, rhs, "sub_tmp");
-            case MarkerType::Mul:
-                return ir_builder.CreateFMul(lhs, rhs, "mul_tmp");
-            case MarkerType::Quo:
-                return ir_builder.CreateFDiv(lhs, rhs, "quo_tmp");
-            case MarkerType::Mod:
-                throw std::runtime_error("fload mod is not allowed");
-            default :
-                assert(false);
-                return nullptr;
-        }
-    }
-
-    Value *code_gen_unary_exp(UnExp *pExp) {
-        auto lhs = code_gen(pExp->lhs);
-        assert(lhs != nullptr);
-        switch (pExp->marker->marker_type) {
-            case MarkerType::Add:
-                return lhs;
-            case MarkerType::Sub:
-                return ir_builder.CreateFNeg(lhs, "negative_tmp");
-            default :
-                assert(false);
-                return nullptr;
-        }
-    }
 
     Value *code_gen(ASTNode *node) {
         switch (node->type) {
@@ -87,6 +53,41 @@ struct LLVMBuilder {
         }
         assert(false);
         return nullptr;
+    }
+
+    Value *code_gen_unary_exp(UnExp *pExp) {
+        auto lhs = code_gen(pExp->lhs);
+        assert(lhs != nullptr);
+        switch (pExp->marker->marker_type) {
+            case MarkerType::Add:
+                return lhs;
+            case MarkerType::Sub:
+                return ir_builder.CreateFNeg(lhs, "negative_tmp");
+            default :
+                assert(false);
+                return nullptr;
+        }
+    }
+
+    Value *code_gen_binary_exp(BiExp *pExp) {
+        auto lhs = code_gen(pExp->lhs), rhs = code_gen(pExp->rhs);
+        assert(lhs != nullptr);
+        assert(rhs != nullptr);
+        switch (pExp->marker->marker_type) {
+            case MarkerType::Add:
+                return ir_builder.CreateFAdd(lhs, rhs, "add_tmp");
+            case MarkerType::Sub:
+                return ir_builder.CreateFSub(lhs, rhs, "sub_tmp");
+            case MarkerType::Mul:
+                return ir_builder.CreateFMul(lhs, rhs, "mul_tmp");
+            case MarkerType::Quo:
+                return ir_builder.CreateFDiv(lhs, rhs, "quo_tmp");
+            case MarkerType::Mod:
+                throw std::runtime_error("fload mod is not allowed");
+            default :
+                assert(false);
+                return nullptr;
+        }
     }
 
 };

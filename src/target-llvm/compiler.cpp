@@ -19,29 +19,36 @@ int32_t main(int argc, char **argv) {
         printf("kaleidoscope-llvm version: " VERSION);
     }
 
+    // 打开文件
     std::ifstream  fin(argv[1]);
-
     if (fin.fail()) {
-        std::cerr << "Kale-LLVM Open Input File "  << argv[1] << " Failed: " << strerror(errno);
+        std::cerr << "Kale-LLVM open input file "  << argv[1] << " failed: " << strerror(errno);
         return errno;
     }
 
-    auto input = IStream(fin);
-
     using IStreamLexer = Lexer<IStream>;
 
+    // 构建模块
+    IStream input(fin);
     IStreamLexer lexer(input);
     Parser<IStreamLexer> parser(lexer);
+    LLVMBuilder builder;
 
-    auto builder = LLVMBuilder();
-    auto value = builder.code_gen(parser.parse());
+    // 解析文件
+    auto ast = parser.parse();
+    auto value = builder.code_gen(ast);
+
+    // 输出中间代码，待生成目标平台代码
     std::string buf;
     llvm::raw_string_ostream os(buf);
-
     value->print(os, true);
     std::cout << buf;
 
+    // 关闭
     fin.close();
+
+    // 清理堆内存
+    delete ast;
 
     return 0;
 }
