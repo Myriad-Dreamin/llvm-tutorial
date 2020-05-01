@@ -1,5 +1,6 @@
 
 #include <gtest/gtest.h>
+#include <kaleidoscope/istream.h>
 #include <kaleidoscope/lexer.h>
 
 struct LexerGetAllTokensTestCase {

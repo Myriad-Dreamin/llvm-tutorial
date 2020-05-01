@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+#include <kaleidoscope/istream.h>
 #include <kaleidoscope/lexer.h>
 #include <kaleidoscope/parser.h>
 #include <kaleidoscope/llvm-codegen.h>

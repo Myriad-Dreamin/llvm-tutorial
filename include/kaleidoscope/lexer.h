@@ -3,23 +3,10 @@
 #ifndef KALEIDOSCOPE_LEXER_H
 #define KALEIDOSCOPE_LEXER_H
 
-#include <vector>
-#include <istream>
 #include "token.h"
+#include <vector>
 #include <cctype>
 #include <cassert>
-
-struct IStream {
-
-    explicit IStream(std::istream &in) : in(in) {}
-
-    [[maybe_unused]] char next_char() {
-        return in.get();
-    }
-
-protected:
-    std::istream &in;
-};
 
 
 bool maybe_marker(char ch) {
@@ -27,8 +14,9 @@ bool maybe_marker(char ch) {
            ch == '%' || ch == '(' || ch == ')' || ch == ',';
 }
 
+// istream的功能太过繁杂，抽象一个Stream接口
 template<typename Stream>
-struct Lexer {
+struct Lexer /* implement Lexer */ {
     using lexer_stream = Stream;
     using token_container = std::vector<Token *>;
 
@@ -47,30 +35,37 @@ struct Lexer {
         tokens.push_back(tok);\
         return tok;\
     } while(0)
+
+        // epsilon
         if (ch == EOF) {
             return nullptr;
         }
 
+        // [ \t\r\n\v]等等
         if (isspace(ch)) {
             next_char();
             while (isspace(ch))
                 next_char();
         }
 
+        // [0-9]+
         if (isdigit(ch)) {
             just_lex(lexNumber);
         }
 
+        // [_a-zA-Z][_0-9a-zA-Z]*
         if (isalpha(ch) || ch == '_') {
             just_lex(lexIdent);
         }
 
+        // 前探一个字符确定是否是需要解释的符号
         if (maybe_marker(ch)) {
             just_lex(lexMarker);
         }
 
         assert(false);
         return nullptr;
+#undef just_lex
     }
 
     const token_container &get_all_tokens() {
@@ -91,6 +86,7 @@ private:
             forward(buf);
         }
 
+        // 如果是关键字，那么优先识别为关键字
         if (keyword_type_string_mapping.count(buf)) {
             return new Keyword(keyword_type_string_mapping.at(buf));
         }
@@ -107,6 +103,7 @@ private:
 
     Token *lexMarker(std::string &buf) {
         forward(buf);
+        // 不捕捉.at not found异常
         return new Marker(marker_type_string_mapping.at(buf));
     }
 

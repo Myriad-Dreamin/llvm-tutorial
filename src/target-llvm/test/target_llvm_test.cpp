@@ -1,6 +1,7 @@
 
 #include <gtest/gtest.h>
 #include <mutex>
+#include <kaleidoscope/istream.h>
 #include <kaleidoscope/lexer.h>
 #include <kaleidoscope/parser.h>
 #include <kaleidoscope/llvm-codegen.h>
