@@ -7,6 +7,7 @@
 
 #include "token.h"
 
+// 目前只有表达式类型
 enum class NodeType {
     ExpNumber,
     ExpIdent,
@@ -15,6 +16,7 @@ enum class NodeType {
     UnExp,
 };
 
+// 基类
 struct ASTNode {
     NodeType type;
 
@@ -22,32 +24,32 @@ struct ASTNode {
     virtual ~ASTNode() = default;
 };
 
+// 无意义的表达式基类，用于区分ASTNode，标记用
 struct Exp : public ASTNode {
 
     explicit Exp(NodeType type) : ASTNode(type) {}
 };
 
 struct ExpNumber : public Exp {
+    //非Node指针不需要delete
     const Number *num;
 
-    explicit ExpNumber(Number *num) : Exp(NodeType::ExpNumber), num(num) {}
+    explicit ExpNumber(const Number *num) : Exp(NodeType::ExpNumber), num(num) {}
 };
 
 struct ExpIdent : public Exp {
     const Identifier *ident;
 
-    explicit ExpIdent(Identifier *ident) : Exp(NodeType::ExpIdent), ident(ident) {}
+    explicit ExpIdent(const Identifier *ident) : Exp(NodeType::ExpIdent), ident(ident) {}
 };
 
-using ParamList = std::vector<Exp*>;
+struct UnExp : public Exp {
+    Exp *lhs;
+    const Marker *marker;
 
-struct ExpFuncCall: public Exp {
-    const Identifier *fn;
-    const ParamList *params;
-
-    explicit ExpFuncCall(Identifier *fn, const ParamList *params) : Exp(NodeType::ExpFuncCall), fn(fn), params(params) {}
-    ~ExpFuncCall() override {
-        delete params;
+    explicit UnExp(const Marker *marker, Exp *lhs) : Exp(NodeType::UnExp), lhs(lhs), marker(marker) {}
+    ~UnExp() override {
+        delete lhs;
     };
 };
 
@@ -55,20 +57,24 @@ struct BiExp : public Exp {
     Exp *lhs, *rhs;
     const Marker *marker;
 
-    explicit BiExp(Exp *lhs, Marker *marker, Exp *rhs) : Exp(NodeType::BiExp), lhs(lhs), rhs(rhs), marker(marker) {}
+    explicit BiExp(Exp *lhs, const Marker *marker, Exp *rhs) : Exp(NodeType::BiExp), lhs(lhs), rhs(rhs), marker(marker) {}
     ~BiExp() override {
         delete lhs;
         delete rhs;
     };
 };
 
-struct UnExp : public Exp {
-    Exp *lhs;
-    const Marker *marker;
+using ParamList = std::vector<Exp*>;
+struct ExpFuncCall: public Exp {
+    const Identifier *fn;
+    ParamList *params;
 
-    explicit UnExp(Marker *marker, Exp *lhs) : Exp(NodeType::UnExp), lhs(lhs), marker(marker) {}
-    ~UnExp() override {
-        delete lhs;
+    explicit ExpFuncCall(const Identifier *fn, ParamList *params) : Exp(NodeType::ExpFuncCall), fn(fn), params(params) {}
+    ~ExpFuncCall() override {
+        for (auto exp: *params) {
+            delete exp;
+        }
+        delete params;
     };
 };
 
