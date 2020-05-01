@@ -36,7 +36,7 @@ struct Lexer {
 
     ~Lexer() {
         for (auto tok: tokens) {
-            deleteToken(tok);
+            delete tok;
         }
     }
 

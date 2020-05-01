@@ -41,11 +41,6 @@ bool token_equal(const Token *lhs, const std::vector<Token*> *rhs) {
     return false;
 }
 
-marker_type_underlying_type get_marker_pri(const Marker *marker) {
-    return *reinterpret_cast<const marker_type_underlying_type *>(
-            &marker->marker_type);
-}
-
 template<typename Lexer>
 struct Parser {
     explicit Parser(Lexer &lexer) : lexer(lexer), token(lexer.next_token()) {

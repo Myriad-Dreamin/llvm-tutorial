@@ -12,7 +12,7 @@ class GoodLexerGetAllTokensTest : public testing::TestWithParam<LexerGetAllToken
     void TearDown() override {
         auto &tokens = GetParam().expected;
         for (auto tok: *tokens) {
-            deleteToken(tok);
+            delete tok;
         }
         tokens->clear();
         delete tokens;
