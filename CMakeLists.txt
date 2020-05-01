@@ -15,10 +15,8 @@ endif ()
 add_subdirectory(googletest)
 # GTest End
 
-# add_subdirectory(llvm-project/llvm)
-# include_directories(llvm-project/llvm/utils/unittest/googletest/include)
-# include_directories(llvm-project/llvm/utils/unittest/googlemock/include)
-
+# LLVM Begin
+# 需要提前build好，该目录为LLVMConfig.cmake所在目录
 set(LLVM_DIR lib/build-llvm/lib/cmake/llvm)
 find_package(LLVM REQUIRED CONFIG)
 
@@ -27,7 +25,8 @@ message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
+# LLVM End
 
+# include/source files
 include_directories(include)
-
 add_subdirectory(src)
